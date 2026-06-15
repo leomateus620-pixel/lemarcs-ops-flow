@@ -43,17 +43,21 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="blueprint-bg flex min-h-screen items-center justify-center px-4">
       <div className="glass max-w-sm rounded-2xl p-8 text-center">
         <h1 className="text-xl font-semibold text-foreground">Algo deu errado</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Tente novamente em instantes.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Tente novamente em instantes.</p>
         <div className="mt-6 flex justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
           >
             Tentar novamente
           </button>
-          <a href="/" className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground">
+          <a
+            href="/"
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground"
+          >
             Início
           </a>
         </div>
@@ -69,15 +73,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#1a2238" },
       { title: "Gestão Lemarc — Ordens de Serviço Industriais" },
-      { name: "description", content: "Plataforma de gestão de ordens de serviço da Lemarc Industrial." },
+      {
+        name: "description",
+        content: "Plataforma de gestão de ordens de serviço da Lemarc Industrial.",
+      },
       { property: "og:title", content: "Gestão Lemarc — Ordens de Serviço Industriais" },
-      { property: "og:description", content: "Plataforma de gestão de ordens de serviço da Lemarc Industrial." },
+      {
+        property: "og:description",
+        content: "Plataforma de gestão de ordens de serviço da Lemarc Industrial.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "Gestão Lemarc — Ordens de Serviço Industriais" },
-      { name: "twitter:description", content: "Plataforma de gestão de ordens de serviço da Lemarc Industrial." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/25a52341-c79e-4a82-a3eb-efa44f11b933/id-preview-682ab43e--3e87f42c-8a40-47f0-aab9-96fb71e5e78e.lovable.app-1781377709076.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/25a52341-c79e-4a82-a3eb-efa44f11b933/id-preview-682ab43e--3e87f42c-8a40-47f0-aab9-96fb71e5e78e.lovable.app-1781377709076.png" },
+      {
+        name: "twitter:description",
+        content: "Plataforma de gestão de ordens de serviço da Lemarc Industrial.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/25a52341-c79e-4a82-a3eb-efa44f11b933/id-preview-682ab43e--3e87f42c-8a40-47f0-aab9-96fb71e5e78e.lovable.app-1781377709076.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/25a52341-c79e-4a82-a3eb-efa44f11b933/id-preview-682ab43e--3e87f42c-8a40-47f0-aab9-96fb71e5e78e.lovable.app-1781377709076.png",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

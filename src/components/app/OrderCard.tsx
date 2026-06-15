@@ -1,8 +1,69 @@
-import { Link } from "@tanstack/react-router";
-import { Bot, Building2, Clock, Cog, HardHat, MapPin, Wrench, Zap, Gauge } from "lucide-react";
-import { StatusBadge } from "./StatusBadge";
-import { PriorityBadge } from "./PriorityBadge";
-import type { Ordem, ServiceType } from "@/lib/mock/serviceOrders";
-const icons: Record<ServiceType, typeof Wrench> = { "Manutenção Mecânica": Cog, "Manutenção Elétrica": Zap, "Automação Industrial": Bot, "Montagem Industrial": HardHat, Instalação: Wrench, "Visita Técnica": Wrench, Emergência: Zap };
-const rail: Record<string,string> = { pending:"var(--status-pending)", transit:"var(--status-transit)", running:"var(--status-running)", finished:"var(--status-done)", review:"var(--status-review)", approved:"var(--status-done)" };
-export function OrderCard({ ordem }: { ordem: Ordem }) { const Icon=icons[ordem.area]; const elapsed=ordem.tempoTrabalhadoMin?`${Math.floor(ordem.tempoTrabalhadoMin/60)}h${String(ordem.tempoTrabalhadoMin%60).padStart(2,"0")}`:"—"; return <Link to="/ordens/$id" params={{id:ordem.id}} className="block"><article className="lemarc-liquid-card lemarc-status-rail lemarc-pressable rounded-3xl p-4 pl-5 active:scale-[0.98]" style={{"--rail-color": rail[ordem.status]} as React.CSSProperties}><div className="flex items-start gap-3"><div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-primary/14 text-primary ring-1 ring-primary/25 lemarc-shimmer"><Icon size={22}/></div><div className="min-w-0 flex-1"><div className="flex min-w-0 items-center gap-1.5"><span className="shrink-0 text-[10px] font-black uppercase tracking-wider text-primary">OS #{ordem.numero}</span><span className="min-w-0 truncate text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{ordem.area}</span></div><h3 className="mt-1 line-clamp-2 font-display text-base font-black leading-tight text-foreground">{ordem.titulo}</h3><div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground"><Building2 size={12} className="shrink-0 text-primary"/><span className="truncate">{ordem.cliente} · {ordem.unidade}</span></div><div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><HardHat size={12} className="shrink-0 text-primary"/><span className="truncate">{ordem.colaborador}</span></div></div><StatusBadge status={ordem.status}/></div><div className="mt-3 flex flex-wrap gap-2 border-t border-border pt-3"><PriorityBadge prioridade={ordem.prioridade}/>{ordem.prioridade==="alta"&&<span className="rounded-full border border-destructive/30 bg-destructive/15 px-2 py-0.5 text-[10px] font-black uppercase text-destructive">Urgente</span>}</div><div className="mt-3 grid grid-cols-4 gap-2 text-[11px] text-muted-foreground"><span className="flex items-center gap-1"><MapPin size={11}/>{ordem.distanciaKm} km</span><span className="flex items-center gap-1"><Clock size={11}/>{ordem.horario}</span><span className="flex items-center gap-1"><Gauge size={11}/>{elapsed}</span><span className="text-right font-bold text-foreground">{ordem.data}</span></div></article></Link>; }
+import { useNavigate } from "@tanstack/react-router";
+import { Camera, Clock, Gauge, MapPinned } from "lucide-react";
+import { LemarcTimelineCard } from "./LemarcTimelineCard";
+import type { Ordem } from "@/lib/mock/serviceOrders";
+import type { OrderStatus } from "./StatusBadge";
+
+const statusPeriod: Record<OrderStatus, string> = {
+  pending: "Pendente",
+  transit: "Trânsito",
+  running: "Execução",
+  finished: "Final",
+  review: "Revisão",
+  approved: "Aprovada",
+};
+
+function lastTimelineTime(ordem: Ordem) {
+  const lastDone = [...ordem.timeline]
+    .reverse()
+    .find((step) => step.concluida && step.hora !== "—");
+  return lastDone?.hora;
+}
+
+function workTimeLabel(minutes: number) {
+  if (!minutes) return "Sem apontamento";
+  return `${Math.floor(minutes / 60)}h${String(minutes % 60).padStart(2, "0")}`;
+}
+
+export function OrderCard({ ordem }: { ordem: Ordem }) {
+  const navigate = useNavigate();
+  const elapsed = workTimeLabel(ordem.tempoTrabalhadoMin);
+
+  return (
+    <LemarcTimelineCard
+      startTime={ordem.horario}
+      endTime={lastTimelineTime(ordem)}
+      period={ordem.data}
+      eyebrow={`OS #${ordem.numero} · ${ordem.area}`}
+      title={ordem.titulo}
+      client={`${ordem.cliente} · ${ordem.unidade}`}
+      location={ordem.local}
+      responsible={ordem.colaborador}
+      resource={ordem.materiais[0] ?? ordem.area}
+      team={ordem.equipe}
+      priority={ordem.prioridade}
+      status={ordem.status}
+      safetyLabel={statusPeriod[ordem.status]}
+      onClick={() => navigate({ to: "/ordens/$id", params: { id: ordem.id } })}
+    >
+      <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/10 pt-3 text-[0.68rem] font-bold text-muted-foreground">
+        <span className="inline-flex min-w-0 items-center gap-1.5">
+          <MapPinned className="h-3.5 w-3.5 shrink-0 text-[var(--lemarc-card-accent)]" />
+          <span className="truncate">{ordem.distanciaKm} km</span>
+        </span>
+        <span className="inline-flex min-w-0 items-center gap-1.5">
+          <Gauge className="h-3.5 w-3.5 shrink-0 text-[var(--lemarc-card-accent)]" />
+          <span className="truncate">{elapsed}</span>
+        </span>
+        <span className="inline-flex min-w-0 items-center justify-end gap-1.5 text-right">
+          {ordem.fotos ? (
+            <Camera className="h-3.5 w-3.5 shrink-0 text-[var(--lemarc-card-accent)]" />
+          ) : (
+            <Clock className="h-3.5 w-3.5 shrink-0 text-[var(--lemarc-card-accent)]" />
+          )}
+          <span className="truncate">{ordem.fotos ? `${ordem.fotos} fotos` : "Sem fotos"}</span>
+        </span>
+      </div>
+    </LemarcTimelineCard>
+  );
+}

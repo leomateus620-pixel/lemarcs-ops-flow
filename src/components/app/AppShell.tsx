@@ -20,8 +20,8 @@ export function AppShell({
   const isHome = !title && !back;
   return (
     <div className="lemarc-app-bg min-h-dvh">
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col">
-        <header className="sticky top-0 z-30 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md">
+      <div className="mx-auto flex min-h-dvh w-full max-w-7xl flex-col">
+        <header className="sticky top-0 z-30 px-4 pb-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur-md sm:px-6 lg:px-8">
           <div className="lemarc-liquid rounded-2xl px-3 py-2.5">
             <div className="flex min-w-0 items-center gap-3">
               {back ? (
@@ -62,7 +62,7 @@ export function AppShell({
             </div>
           </div>
         </header>
-        <main className="lemarc-page-enter flex-1 px-4 pb-32 pt-2">{children}</main>
+        <main className="lemarc-page-enter flex-1 px-4 pb-32 pt-2 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
   );

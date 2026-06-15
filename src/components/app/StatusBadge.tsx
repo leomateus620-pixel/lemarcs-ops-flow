@@ -22,7 +22,13 @@ const styles: Record<OrderStatus, string> = {
 
 export function StatusBadge({ status, className }: { status: OrderStatus; className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider", styles[status], className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider",
+        styles[status],
+        className,
+      )}
+    >
       <span className="h-1.5 w-1.5 rounded-full bg-current shadow-[0_0_10px_currentColor]" />
       {labels[status]}
     </span>
